@@ -55,8 +55,9 @@ int main ()
 		}
 
 		printf("\nunesite string \n");
-		str = (char *)malloc(num_of_bytes+1);  
-		fgets(str, 100, stdin);
+		str = (char *)malloc(num_of_bytes+1);
+		scanf("%[^\n]%*c", str);
+		//fgets(str, 100, stdin);
 		fprintf (fp,"string=%s\n", str);
 		if(fclose(fp))
 		  {

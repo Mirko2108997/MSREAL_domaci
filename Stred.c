@@ -20,7 +20,7 @@ static struct cdev *my_cdev;
 
 char stred[120];
 int endRead = 0;
-int pos = 0;
+int pos = 0, a, b;
 int duz;
 
 int stred_open(struct inode *pinode, struct file *pfile);
@@ -121,8 +121,12 @@ ssize_t stred_write(struct file *pfile, const char __user *buffer, size_t length
 	}
 	
 	else if(strstr(buff, "shrink")){
-	  strim(stred);
-                
+	  unos = strim(stred);
+	  a = strlen(stred);
+	  b = strlen(unos);
+          strncpy(stred, unos, strlen(unos));
+	  for ( i = 0; i < a - b; i++)
+	    stred[strlen(stred) - i] = 0;
 	  printk(KERN_INFO "Succesfully shrinked");
 	}
 	
@@ -156,7 +160,7 @@ ssize_t stred_write(struct file *pfile, const char __user *buffer, size_t length
 	}
 
 	else if(strstr(buff, "remove=")){
-	  int broj, j, k;
+	  int broj, j, k,z,x;
 	  
 	  unos = buff + 7;
 	  if(strlen(unos) < strlen(stred)){
@@ -166,9 +170,17 @@ ssize_t stred_write(struct file *pfile, const char __user *buffer, size_t length
 		if (stred[i + j] == unos[j]){
 		  broj++;
 		  if (broj == strlen(unos)) {
-		    for (k = 0; k < strlen(unos); k++){
-		      stred[i + k] = ' ';
+		    z = 0;
+		    
+		    for (k = i; k < strlen(stred) - strlen (unos - 1); k++){
+		      stred[i + z] = stred[i + strlen(unos) + z];
+		      z++;
 		    }
+		    
+		    for(x = 0 ; x <= strlen(unos); x++) {
+		      stred[strlen(stred) - x] = 0; 
+		    }
+		    
 		  }
 		}
 	      }
