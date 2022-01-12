@@ -6,9 +6,8 @@ int main ()
 {
 	FILE *fp;
 	char *str;
-	size_t num_of_bytes = 100;
-	char string[100];
-	int fja, skrati;
+	size_t num_of_bytes = 100, brfje = 1;
+	char string[100], *fja;
 	
 	while(1)
 	{
@@ -20,13 +19,13 @@ int main ()
 	  printf("5) dodavanje stringa na postojeci \n");
 	  printf("6) smanjivanje stringa \n");
 	  printf("7) brisanje odabrane rijeci iz stringa \n");
-	  printf("8) izlaz iz programa \n");
-	  
-	  scanf( "%d", &fja);
-	  if (fja > 0 && fja < 9){
-	    
-	  switch (fja){
-	  case 1:
+	  printf("q) izlaz iz programa \n");
+
+	  fja = (char *)malloc(brfje+1);
+	  getline( &fja, &brfje, stdin);
+	  printf ("\n");
+	  switch (*fja){
+	  case '1':
 		fp = fopen ("/dev/stred", "r");
 		if(fp==NULL)
 		{
@@ -46,7 +45,7 @@ int main ()
 
 		free(str);
 		break;
-	  case 2 :
+	  case '2' :
 	    fp = fopen ("/dev/stred", "w");
 		if(fp==NULL)
 		{
@@ -67,7 +66,7 @@ int main ()
 		free(str);
 	    break;
 
-	  case 3 :
+	  case '3' :
 	    fp = fopen ("/dev/stred", "w");
 		if(fp==NULL)
 		{
@@ -85,7 +84,7 @@ int main ()
 		  }
 		free(str);
 	    break;
-	  case 4 :
+	  case '4' :
 	    fp = fopen ("/dev/stred", "w");
 		if(fp==NULL)
 		{
@@ -104,7 +103,7 @@ int main ()
 		free(str);
 	    break;
 
-	  case 5 :
+	  case '5' :
 	    fp = fopen ("/dev/stred", "w");
 		if(fp==NULL)
 		{
@@ -126,7 +125,8 @@ int main ()
 		free(str);
 	    break;
 
-	  case 6 :
+	  case '6' :
+	  
 	    fp = fopen ("/dev/stred", "w");
 		if(fp==NULL)
 		{
@@ -137,8 +137,8 @@ int main ()
 		printf("unesite broj za skracivanje \n");
 		
 		str = (char *)malloc(num_of_bytes+1);  
-		scanf( "%d", &skrati);
-		fprintf (fp,"truncate=%d", skrati);
+		scanf( "%s", str);
+		fprintf (fp,"truncate=%s", str);
 		if(fclose(fp))
 		  {
 			puts("Problem pri zatvaranju /dev/stred");
@@ -148,7 +148,7 @@ int main ()
 		free(str);
 	    break;
 
-	  case 7 :
+	  case '7' :
 	    fp = fopen ("/dev/stred", "w");
 		if(fp==NULL)
 		{
@@ -168,12 +168,12 @@ int main ()
 		  }
 		free(str);
 		break;
-	  case 8:
+	  case 'q':
 	    return 0;
 	    break;
 	  default:
 	    break;
 	  }
-	  }
+	  
 	}
 }

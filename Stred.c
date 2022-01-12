@@ -121,13 +121,15 @@ ssize_t stred_write(struct file *pfile, const char __user *buffer, size_t length
 	}
 	
 	else if(strstr(buff, "shrink")){
+	  if (stred[0] == ' ' || stred[strlen(stred)] == ' '){
 	  unos = strim(stred);
+	  strim(stred);
 	  a = strlen(stred);
 	  b = strlen(unos);
           strncpy(stred, unos, strlen(unos));
-	  for ( i = 0; i < a - b; i++)
-	    stred[strlen(stred) - i] = 0;
+	  stred[a - b] = '\0';
 	  printk(KERN_INFO "Succesfully shrinked");
+	  }
 	}
 	
 	else if (strstr(buff, "append=")){
@@ -148,19 +150,18 @@ ssize_t stred_write(struct file *pfile, const char __user *buffer, size_t length
 	}
 
        	else if(strstr(buff, "truncate=")){
-	  int brojac = 3;
+	  int brojac;
 	  unos = buff + 9;
 
-	  kstrtoint(unos, 10, &brojac);
-	  
+	  kstrtoint(unos, 10, &brojac); 
 	   for(i = 0 ; i<=brojac; i ++) {
 	    stred[strlen(stred) - i] = 0; 
 	  }
-	   printk(KERN_INFO "Succesfully truncated %d", brojac);
+	   printk(KERN_INFO "Succesfully truncated %s", unos);
 	}
 
 	else if(strstr(buff, "remove=")){
-	  int broj, j, k,z,x;
+	  int broj, j, k,z;
 	  
 	  unos = buff + 7;
 	  if(strlen(unos) < strlen(stred)){
@@ -172,14 +173,12 @@ ssize_t stred_write(struct file *pfile, const char __user *buffer, size_t length
 		  if (broj == strlen(unos)) {
 		    z = 0;
 		    
-		    for (k = i; k < strlen(stred) - strlen (unos - 1); k++){
+		    for (k = i; k < strlen(stred) - strlen (unos); k++){
 		      stred[i + z] = stred[i + strlen(unos) + z];
 		      z++;
 		    }
 		    
-		    for(x = 0 ; x <= strlen(unos); x++) {
-		      stred[strlen(stred) - x] = 0; 
-		    }
+		    stred[(strlen(stred) - strlen(unos))] = '\0';
 		    
 		  }
 		}
