@@ -20,7 +20,7 @@ static struct cdev *my_cdev;
 
 char stred[120];
 int endRead = 0;
-int pos = 0, a, b;
+int pos = 0;
 int duz;
 
 int stred_open(struct inode *pinode, struct file *pfile);
@@ -71,12 +71,11 @@ ssize_t stred_read(struct file *pfile, char __user *buffer, size_t length, loff_
 		printk(KERN_INFO "Succesfully read from file\n");
 		return 0;
 	}
-	len = scnprintf(buff,BUFF_SIZE , "%c ", stred[pos]);
+	len = scnprintf(buff,BUFF_SIZE , "%s ", stred);
 	ret = copy_to_user(buffer, buff, len);
 	if(ret)
 		return -EFAULT;
-	pos++;
-	if (pos == duz)
+
 	  endRead = 1;
 	return len;
 }
@@ -121,26 +120,25 @@ ssize_t stred_write(struct file *pfile, const char __user *buffer, size_t length
 	}
 	
 	else if(strstr(buff, "shrink")){
-	  if (stred[0] == ' ' || stred[strlen(stred)] == ' '){
+	 
 	  unos = strim(stred);
-	  strim(stred);
-	  a = strlen(stred);
-	  b = strlen(unos);
+	  printk(KERN_INFO "string je %s\n", unos);
+	
           strncpy(stred, unos, strlen(unos));
-	  stred[a - b] = '\0';
+
+	  stred[strlen(unos)] = '\0';
 	  printk(KERN_INFO "Succesfully shrinked");
-	  }
+	  
 	}
 	
 	else if (strstr(buff, "append=")){
 	  int dstring,  dunos;
-		
-		unos = buff + 7;
+	       	unos = buff + 7;
    		dstring = strlen(stred);
    		dunos = strlen(unos);
 		
    	       if((dstring + dunos)< 100){	   
-		  strcat (stred, unos);
+	        strcat (stred, unos);
 		  }
 	       else{
 		  printk(KERN_INFO "upisaces malo sutra");
@@ -150,14 +148,18 @@ ssize_t stred_write(struct file *pfile, const char __user *buffer, size_t length
 	}
 
        	else if(strstr(buff, "truncate=")){
-	  int brojac;
+	  int brojac, duzina;
 	  unos = buff + 9;
-
-	  kstrtoint(unos, 10, &brojac); 
+	  duzina = strlen(stred);
+	  printk(KERN_INFO "duzina je: %d\n", duzina);
+	  
+	  sscanf(unos, "%d", &brojac);
+	  
 	   for(i = 0 ; i<=brojac; i ++) {
-	    stred[strlen(stred) - i] = 0; 
+	    stred[duzina] = 0;
+	    duzina --;
 	  }
-	   printk(KERN_INFO "Succesfully truncated %s", unos);
+	   printk(KERN_INFO "Succesfully truncated %d", brojac);
 	}
 
 	else if(strstr(buff, "remove=")){
